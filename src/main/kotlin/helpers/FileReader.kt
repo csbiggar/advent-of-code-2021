@@ -8,7 +8,7 @@ import java.io.File
 class FileReader(private val afileName: String) {
     private val file = File(Day1::class.java.getResource(afileName)!!.file)
 
-    fun readLines(): List<String> {
+    fun readStrings(): List<String> {
         return file.readLines()
     }
 
