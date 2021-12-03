@@ -1,10 +1,7 @@
 package days
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalStateException
 
 internal class Day3Test {
 
@@ -17,7 +14,7 @@ internal class Day3Test {
     @Test
     fun `gamma rate should be compiled from most common bit in each position`() {
         val result = Day3().findGammaRate(input)
-        assertThat(result).isEqualTo(22)
+        assertThat(result).isEqualTo("10110")
     }
 
     @Test
@@ -26,11 +23,15 @@ internal class Day3Test {
         val input2 = listOf('1', '0', '0')
         val input3 = listOf('1', '0', '0', '1')
 
-        assertThat(Day3().mostCommon(input1)).`as`("mostly ones").isEqualTo("1")
-        assertThat(Day3().mostCommon(input2)).`as`("mostly zeros").isEqualTo("0")
-        val exception = assertThrows<IllegalStateException> { Day3().mostCommon(input3) }
-        assertThat(exception.message).`as`("same number").contains("Contains equal numbers of 0s and 1s")
+        assertThat(Day3().mostCommon(input1)).`as`("mostly ones").isEqualTo('1')
+        assertThat(Day3().mostCommon(input2)).`as`("mostly zeros").isEqualTo('0')
+        assertThat(Day3().mostCommon(input3)).`as`("same number").isEqualTo('1')
+    }
 
+    @Test
+    fun `part 2`() {
+//        val result = Day3().getPowerConsumption(input)
+//        assertThat(result).isEqualTo(198)
     }
 
     private val input = listOf(

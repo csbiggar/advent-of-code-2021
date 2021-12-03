@@ -54,8 +54,7 @@ class Day3 {
 
         return when {
             zeros > ones -> '0'
-            ones > zeros -> '1'
-            else -> throw IllegalStateException("Contains equal numbers of 0s and 1s")
+            else -> '1'
         }
 
     }
