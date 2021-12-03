@@ -22,24 +22,26 @@ fun main() {
 
 class Day2 {
     fun horizontalXDepth(course: List<String>): Int {
-        val courses: Map<String, Int> = course.map {
-            it.substringBefore(DELIMITER) to it.substringAfter(DELIMITER).toInt()
-        }.groupBy { (command, _) -> command }.mapValues { (_, listOfPairs) -> listOfPairs.sumOf { it.second } }
+        val courses: Map<Direction, Int> = course
+            .map {
+                valueOf(it.substringBefore(DELIMITER)) to it.substringAfter(DELIMITER).toInt()
+            }.groupBy { (command, _) -> command }
+            .mapValues { (_, listOfPairs) -> listOfPairs.sumOf { it.second } }
 
-        val depth = courses.getOrDefault("down", 0) - courses.getOrDefault("up", 0)
-        val horizontal = courses.getOrDefault("forward", 0)
+        val depth = courses.getOrDefault(down, 0) - courses.getOrDefault(up, 0)
+        val horizontal = courses.getOrDefault(forward, 0)
 
         return depth * horizontal
     }
 
-    fun withAim(course: List<String>): Int {
+    fun withAim(instructions: List<String>): Int {
         var aim = 0
-        val steps = course
+        val steps = instructions
             .map {
-                aim = calculateAim(it, aim)
-                calculateDirection(it, aim)
+                val instruction = Instruction(valueOf(it.substringBefore(DELIMITER)), it.substringAfter(DELIMITER).toInt())
+                aim = calculateAim(instruction, aim)
+                calculateStep(instruction, aim)
             }
-
 
         val horizontal = steps.sumOf { it.horizontal }
         val vertical = steps.sumOf { it.vertical }
@@ -47,28 +49,22 @@ class Day2 {
         return horizontal * vertical
     }
 
-    private fun calculateAim(instruction: String, currentAim: Int): Int {
-        val direction = valueOf(instruction.substringBefore(DELIMITER))
-        val value = instruction.substringAfter(DELIMITER).toInt()
-
-        return when (direction) {
-            down -> currentAim + value
-            up -> currentAim - value
+    private fun calculateAim(instruction: Instruction, currentAim: Int): Int {
+        return when (instruction.direction) {
+            down -> currentAim + instruction.value
+            up -> currentAim - instruction.value
             else -> currentAim
         }
     }
 
-    private fun calculateDirection(instruction: String, aim: Int): Step {
-        val direction = valueOf(instruction.substringBefore(DELIMITER))
-        val value = instruction.substringAfter(DELIMITER).toInt()
-
-        val horizontalStep = when (direction) {
-            forward -> value
+    private fun calculateStep(instruction: Instruction, aim: Int): Step {
+        val horizontalStep = when (instruction.direction) {
+            forward -> instruction.value
             else -> 0
         }
 
-        val verticalStep = when (direction) {
-            forward -> aim * value
+        val verticalStep = when (instruction.direction) {
+            forward -> aim * instruction.value
             else -> 0
         }
         return Step(horizontalStep, verticalStep)
@@ -80,6 +76,11 @@ class Day2 {
 enum class Direction {
     forward, up, down
 }
+
+data class Instruction(
+    val direction: Direction,
+    val value: Int
+)
 
 data class Step(
     val horizontal: Int,
