@@ -39,7 +39,7 @@ class Day2 {
         val steps = instructions
             .map {
                 val instruction = Instruction(valueOf(it.substringBefore(DELIMITER)), it.substringAfter(DELIMITER).toInt())
-                aim = calculateAim(instruction, aim)
+                aim += calculateAimAdjustment(instruction)
                 calculateStep(instruction, aim)
             }
 
@@ -49,11 +49,11 @@ class Day2 {
         return horizontal * vertical
     }
 
-    private fun calculateAim(instruction: Instruction, currentAim: Int): Int {
+    private fun calculateAimAdjustment(instruction: Instruction): Int {
         return when (instruction.direction) {
-            down -> currentAim + instruction.value
-            up -> currentAim - instruction.value
-            else -> currentAim
+            down ->  instruction.value
+            up -> instruction.value.unaryMinus()
+            else -> 0
         }
     }
 
