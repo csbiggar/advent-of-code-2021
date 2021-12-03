@@ -11,6 +11,12 @@ internal class Day2Test {
         assertThat(result).isEqualTo(150)
     }
 
+    @Test
+    fun `add aim into the mix`() {
+        val result = Day2().withAim(input)
+        assertThat(result).isEqualTo(900)
+    }
+
     private val input = listOf(
         "forward 5",
         "down 5",
@@ -19,4 +25,5 @@ internal class Day2Test {
         "down 8",
         "forward 2",
     )
+
 }
