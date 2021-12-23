@@ -49,22 +49,22 @@ internal class BingoBoardTest {
     }
 
     @Test
-    fun `should create board from string`(){
+    fun `should create board from string`() {
 
         val boardAsString = """ 1  2  
             |33  44""".trimMargin()
 
-            val expectedCard1 = BingoBoard(
-                mapOf(
-                    Coordinate(0, 0) to BingoBoardEntry(1),
-                    Coordinate(0, 1) to BingoBoardEntry(2),
-                    Coordinate(1, 0) to BingoBoardEntry(33),
-                    Coordinate(1, 1) to BingoBoardEntry(44),
-                )
+        val expectedCard1 = BingoBoard(
+            mapOf(
+                Coordinate(0, 0) to BingoBoardEntry(1),
+                Coordinate(0, 1) to BingoBoardEntry(2),
+                Coordinate(1, 0) to BingoBoardEntry(33),
+                Coordinate(1, 1) to BingoBoardEntry(44),
             )
+        )
 
-            // Expect
-            assertThat(BingoBoard.create(boardAsString)).isEqualTo(expectedCard1)
+        // Expect
+        assertThat(BingoBoard.create(boardAsString)).isEqualTo(expectedCard1)
     }
 
     @Test
@@ -75,9 +75,9 @@ internal class BingoBoardTest {
         assertThat(result).containsExactly(3, 44, 5)
 
     }
-    
+
     @Test
-    fun `should update called number to marked`(){
+    fun `should update called number to marked`() {
         val initialCard = BingoBoard(
             mapOf(
                 Coordinate(0, 0) to BingoBoardEntry(3),
@@ -85,8 +85,8 @@ internal class BingoBoardTest {
                 Coordinate(1, 0) to BingoBoardEntry(7),
                 Coordinate(1, 1) to BingoBoardEntry(11),
             )
-        )      
-        
+        )
+
         val markedCard = BingoBoard(
             mapOf(
                 Coordinate(0, 0) to BingoBoardEntry(3),
@@ -111,7 +111,53 @@ internal class BingoBoardTest {
             )
         )
         val numbers = card.getNumbers()
-        assertThat(numbers).containsExactlyInAnyOrder(3,5,7,11)
+        assertThat(numbers).containsExactlyInAnyOrder(3, 5, 7, 11)
+    }
+
+    @Test
+    fun `should match a board with the same numbers`() {
+
+        val unmarkedBoard = BingoBoard(
+            mapOf(
+                Coordinate(0, 0) to BingoBoardEntry(3),
+                Coordinate(0, 1) to BingoBoardEntry(5),
+                Coordinate(1, 0) to BingoBoardEntry(7),
+                Coordinate(1, 1) to BingoBoardEntry(11),
+            )
+        )
+
+        val markedBoard = BingoBoard(
+            mapOf(
+                Coordinate(0, 0) to BingoBoardEntry(3, true),
+                Coordinate(0, 1) to BingoBoardEntry(5),
+                Coordinate(1, 0) to BingoBoardEntry(7),
+                Coordinate(1, 1) to BingoBoardEntry(11, true),
+            )
+        )
+        assertThat(unmarkedBoard.hasTheSameNumbersAs(markedBoard)).isTrue
+    }
+
+    @Test
+    fun `should not match board with different numbers`() {
+
+        val board1 = BingoBoard(
+            mapOf(
+                Coordinate(0, 0) to BingoBoardEntry(3),
+                Coordinate(0, 1) to BingoBoardEntry(5),
+                Coordinate(1, 0) to BingoBoardEntry(7),
+                Coordinate(1, 1) to BingoBoardEntry(11),
+            )
+        )
+
+        val board2 = BingoBoard(
+            mapOf(
+                Coordinate(0, 0) to BingoBoardEntry(3),
+                Coordinate(0, 1) to BingoBoardEntry(6),
+                Coordinate(1, 0) to BingoBoardEntry(7),
+                Coordinate(1, 1) to BingoBoardEntry(11),
+            )
+        )
+        assertThat(board1.hasTheSameNumbersAs(board2)).isFalse()
     }
 
 }

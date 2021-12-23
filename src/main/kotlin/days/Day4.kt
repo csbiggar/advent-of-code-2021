@@ -45,7 +45,8 @@ class Day4(input: String) {
     tailrec fun findLastWinningBoard(boardsNotYetWon: List<BingoBoard> = bingoBoards): Winner {
 
         val winners = findWinningBoards(currentBoardsStatus = boardsNotYetWon)
-        val newBoardsNotYetWon = boardsNotYetWon.filterNot { board -> winners.map { it.board.getNumbers() }.any { it == board.getNumbers() } }
+        val newBoardsNotYetWon = boardsNotYetWon
+            .filterNot { board -> winners.any { winner -> winner.board.hasTheSameNumbersAs(board) } }
 
         if (newBoardsNotYetWon.isEmpty() && winners.size > 1) throw Exception("More than one losing board")
         if (newBoardsNotYetWon.isEmpty()) return winners.first()
@@ -118,6 +119,7 @@ data class BingoBoard(val bingoBoardEntries: Map<Coordinate, BingoBoardEntry>) {
 
     fun getNumbers(): List<Int> = bingoBoardEntries.values.map { it.value }
 
+    fun hasTheSameNumbersAs(other: BingoBoard): Boolean = this.getNumbers() == other.getNumbers()
 
     companion object {
         fun create(boardAsString: String): BingoBoard {
