@@ -5,11 +5,15 @@ import java.lang.IllegalStateException
 import kotlin.math.sqrt
 
 fun main() {
-    val winner = Day4(FileReader("/day4.txt").readText()).findWinningBoard()
+    val bingoGame = Day4(FileReader("/day4.txt").readText())
+    val winner = bingoGame.findWinningBoards().first()
 
     println("Last number called: ${winner.lastNumberCalled}, board numbers: ${winner.board.getNumbers()}")
 
     println("Score: ${winner.getScore()}")  // 72770
+
+    val loser = bingoGame.findLastWinningBoard()
+    println("Loser score: ${loser.getScore()}")
 }
 
 class Day4(input: String) {
@@ -22,20 +26,30 @@ class Day4(input: String) {
         .drop(1)
         .map { BingoBoard.create(it) }
 
-    tailrec fun findWinningBoard(calledNumberIndex: Int = 0, currentBoardsStatus: List<BingoBoard> = bingoBoards): Winner {
+    tailrec fun findWinningBoards(calledNumberIndex: Int = 0, currentBoardsStatus: List<BingoBoard> = bingoBoards): List<Winner> {
 
         val newBoardsStatus = currentBoardsStatus.map { it.markCalledNumber(calledNumbers[calledNumberIndex]) }
 
         val winners = newBoardsStatus
             .filter { it.isWinner() }
+            .map { Winner(calledNumbers[calledNumberIndex], it) }
 
-        if (winners.size == 1) return Winner(calledNumbers[calledNumberIndex], winners.first())
-        if (winners.size > 1) throw Exception("Too many winners!")
+        if (winners.isNotEmpty()) return winners
 
         val newCalledNumberIndex = calledNumberIndex + 1
         if (newCalledNumberIndex >= calledNumbers.size) throw Exception("All numbers called but no winning board found")
 
-        return findWinningBoard(newCalledNumberIndex, newBoardsStatus)
+        return findWinningBoards(newCalledNumberIndex, newBoardsStatus)
+    }
+
+    tailrec fun findLastWinningBoard(boardsNotYetWon: List<BingoBoard> = bingoBoards): Winner {
+
+        val winners = findWinningBoards(currentBoardsStatus = boardsNotYetWon)
+        val newBoardsNotYetWon = boardsNotYetWon.filterNot { board -> winners.map { it.board.getNumbers() }.any { it == board.getNumbers() } }
+
+        if (newBoardsNotYetWon.isEmpty() && winners.size > 1) throw Exception("More than one losing board")
+        if (newBoardsNotYetWon.isEmpty()) return winners.first()
+        return findLastWinningBoard(boardsNotYetWon = newBoardsNotYetWon)
     }
 
 }

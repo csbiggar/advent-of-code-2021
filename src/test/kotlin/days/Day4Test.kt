@@ -43,21 +43,6 @@ internal class Day4Test {
         Day4(FileReader("/day4.txt").readText())
     }
 
-
-    @Test
-    fun `should find winning bingo card with the last called number`() {
-        val expectedWinner = BingoBoard.create("""14 21 17 24  4
-10 16 15  9 19
-18  8 23 26 20
-22 11 13  6  5
- 2  0 12  3  7""")
-
-        val result = Day4(input).findWinningBoard()
-        assertThat(result.board.getNumbers()).isEqualTo(expectedWinner.getNumbers())
-        assertThat(result.lastNumberCalled).isEqualTo(24)
-    }
-
-
     @Test
     fun `marked row wins`() {
         val board = BingoBoard(
@@ -101,6 +86,33 @@ internal class Day4Test {
 
         val result = board.isWinner()
         assertThat(result).isFalse()
+    }
+
+
+    @Test
+    fun `should find winning bingo card with the last called number`() {
+        val expectedWinner = BingoBoard.create("""14 21 17 24  4
+10 16 15  9 19
+18  8 23 26 20
+22 11 13  6  5
+ 2  0 12  3  7""")
+
+        val result = Day4(input).findWinningBoards().first()
+        assertThat(result.board.getNumbers()).isEqualTo(expectedWinner.getNumbers())
+        assertThat(result.lastNumberCalled).isEqualTo(24)
+    }
+
+    @Test
+    fun `should find losing board`() {
+        val expectedLoser = BingoBoard.create(""" 3 15  0  2 22
+ 9 18 13 17  5
+19  8  7 25 23
+20 11 10 24  4
+14 21 16 12  6""")
+
+        val result = Day4(input).findLastWinningBoard()
+        assertThat(result.board.getNumbers()).isEqualTo(expectedLoser.getNumbers())
+        assertThat(result.lastNumberCalled).isEqualTo(13)
     }
 
     private val babyInput = """7,4,9
