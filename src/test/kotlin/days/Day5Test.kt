@@ -52,6 +52,25 @@ internal class Day5Test {
     }
 
     @Test
+    fun `should find all points covered by a reverse horizontal line`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(5, 4),
+                end = Coordinate(2, 4)
+            )
+        )
+
+        assertThat(result).containsExactly(
+            Coordinate(2, 4),
+            Coordinate(3, 4),
+            Coordinate(4, 4),
+            Coordinate(5, 4)
+        )
+
+    }
+
+    @Test
     fun `should find all points covered by a vertical line`() {
 
         val result = Day5().pointsCoveredByLine(
@@ -67,7 +86,57 @@ internal class Day5Test {
             Coordinate(4, 4),
             Coordinate(4, 5)
         )
+    }
 
+    @Test
+    fun `should find all points covered by a reverse vertical line`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(4, 5),
+                end = Coordinate(4, 2)
+            )
+        )
+
+        assertThat(result).containsExactly(
+            Coordinate(4, 2),
+            Coordinate(4, 3),
+            Coordinate(4, 4),
+            Coordinate(4, 5)
+        )
+    }
+
+    @Test
+    fun `should list points belonging to more than one line`() {
+        val line1 = Line(Coordinate(1, 1), Coordinate(5, 1))
+        val line2 = Line(Coordinate(3, 1), Coordinate(3, 3))
+
+        val result = Day5().findNumberOfLinesPerCoordinate(listOf(line1, line2))
+
+        assertThat(result).containsEntry(Coordinate(3, 1), 2)
+        assertThat(result).containsEntry(Coordinate(1, 1), 1)
+        assertThat(result).containsEntry(Coordinate(3, 3), 1)
+    }
+
+    @Test
+    fun `should list points belonging to more than one line in the given test case`(){
+        val lines = Day5().horizontalOrVerticalOnly(testInput)
+        val coordCount = Day5().findNumberOfLinesPerCoordinate(lines)
+
+        assertThat(coordCount).containsAllEntriesOf(
+            mapOf(
+                Coordinate(0,9) to 2,
+                Coordinate(3, 4) to 2,
+            )
+        )
+
+    }
+
+    @Test
+    fun `should count how many coords have two or more lines converging`(){
+        val result = Day5().countPointsWithOverlappingHorizontalOrVerticalLines(testInput)
+
+        assertThat(result).isEqualTo(5)
     }
 }
 
