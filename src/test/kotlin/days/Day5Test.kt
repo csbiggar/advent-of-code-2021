@@ -11,11 +11,11 @@ internal class Day5Test {
             |1,1 -> 2,2
             |2,2 -> 2,4""".trimMargin()
 
-        val result = Day5(input).horizontalOrVerticalOnly()
+        val result = Day5().horizontalOrVerticalOnly(input)
 
         assertThat(result).containsExactly(
-            listOf(1, 1, 1, 2),
-            listOf(2, 2, 2, 4)
+            Line(Coordinate(1, 1), Coordinate(1, 2)),
+            Line(Coordinate(2, 2), Coordinate(2, 4))
         )
     }
 
@@ -25,11 +25,49 @@ internal class Day5Test {
             |1,2 -> 2,2
             |3,2 -> 2,4""".trimMargin()
 
-        val result = Day5(input).horizontalOrVerticalOnly()
+        val result = Day5().horizontalOrVerticalOnly(input)
 
         assertThat(result).containsExactly(
-            listOf(1, 2, 2, 2),
+            Line(Coordinate(1, 2), Coordinate(2, 2))
         )
+    }
+
+    @Test
+    fun `should find all points covered by a horizontal line`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(2, 4),
+                end = Coordinate(5, 4)
+            )
+        )
+
+        assertThat(result).containsExactly(
+            Coordinate(2, 4),
+            Coordinate(3, 4),
+            Coordinate(4, 4),
+            Coordinate(5, 4)
+        )
+
+    }
+
+    @Test
+    fun `should find all points covered by a vertical line`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(4, 2),
+                end = Coordinate(4, 5)
+            )
+        )
+
+        assertThat(result).containsExactly(
+            Coordinate(4, 2),
+            Coordinate(4, 3),
+            Coordinate(4, 4),
+            Coordinate(4, 5)
+        )
+
     }
 }
 
