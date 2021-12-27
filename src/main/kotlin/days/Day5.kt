@@ -4,8 +4,13 @@ import helpers.FileReader
 
 
 fun main() {
-    val part1result = Day5().countPointsWithOverlappingHorizontalOrVerticalLines(FileReader("/day5.txt").readText())
+    val input = FileReader("/day5.txt").readText()
+    val part1result = Day5().countPointsWithOverlappingHorizontalOrVerticalLines(input)
     println("Part 1: $part1result") //7297
+
+    val part2Result = Day5().countPointsWithOverlappingLines(input)
+    println("Part 2: $part2Result") //21038
+
 }
 
 data class Line(
@@ -16,23 +21,25 @@ data class Line(
 class Day5 {
 
     fun horizontalOrVerticalOnly(input: String): List<Line> {
-        val lines = input.lines().map { line -> line.split(",", "->").map { it.trim().toInt() } }
+        return asLines(input)
+            .filter { it.start.x == it.end.x || it.start.y == it.end.y }
 
-        return lines
-            .filter { it[0] == it[2] || it[1] == it[3] }
-            .map {
-                Line(
-                    Coordinate(it[0], it[1]),
-                    Coordinate(it[2], it[3])
-                )
-            }
     }
+
+    fun asLines(input: String) = input.lines()
+        .map { line -> line.split(",", "->").map { it.trim().toInt() } }
+        .map {
+            Line(
+                Coordinate(it[0], it[1]),
+                Coordinate(it[2], it[3])
+            )
+        }
 
     fun pointsCoveredByLine(line: Line): List<Coordinate> {
         return when {
             line.start.y == line.end.y -> coordinatesCoveredByHorizontalLine(line)
             line.start.x == line.end.x -> coordinatesCoveredByVerticalLine(line)
-            else -> throw IllegalStateException("not a horizontal or vertical line: $line")
+            else -> coordinatesCoveredByDiagonalLine(line)
         }
     }
 
@@ -52,15 +59,50 @@ class Day5 {
         }
     }
 
+    private fun coordinatesCoveredByDiagonalLine(line: Line): List<Coordinate> {
+        return when {
+            line.start.x < line.end.x && line.start.y > line.end.y -> {
+                (line.start.x..line.end.x)
+                    .mapIndexed { counter, x ->
+                        Coordinate(x, line.start.y - counter)
+                    }
+            }
+            line.start.x > line.end.x && line.start.y < line.end.y -> {
+                (line.end.x..line.start.x).mapIndexed { counter, x ->
+                    Coordinate(x, line.end.y - counter)
+                }
+            }
+            line.start.x > line.end.x && line.start.y > line.end.y -> {
+                (line.end.x..line.start.x).mapIndexed { counter, x ->
+                    Coordinate(x, line.end.y + counter)
+                }
+            }
+            line.start.x < line.end.x && line.start.y < line.end.y -> {
+                (line.start.x..line.end.x).mapIndexed { counter, x ->
+                    Coordinate(x, line.start.y + counter)
+                }
+            }
+            else -> throw Exception("arg")
+        }
+    }
+
+
     fun findNumberOfLinesPerCoordinate(lines: List<Line>): Map<Coordinate, Int> {
         return lines
-            .flatMap { pointsCoveredByLine(it) }
+            .flatMap {
+                pointsCoveredByLine(it)
+            }
             .groupBy { it }
             .mapValues { it.value.size }
     }
 
     fun countPointsWithOverlappingHorizontalOrVerticalLines(input: String): Int {
         val lines = horizontalOrVerticalOnly(input)
+        return findNumberOfLinesPerCoordinate(lines).filter { it.value > 1 }.size
+    }
+
+    fun countPointsWithOverlappingLines(input: String): Int {
+        val lines = asLines(input)
         return findNumberOfLinesPerCoordinate(lines).filter { it.value > 1 }.size
     }
 }

@@ -107,7 +107,78 @@ internal class Day5Test {
     }
 
     @Test
-    fun `should list points belonging to more than one line`() {
+    fun `should find all points covered by a diagonal line top left to bottom right`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(1, 1),
+                end = Coordinate(3, 3)
+            )
+        )
+
+        assertThat(result).containsExactly(
+            Coordinate(1, 1),
+            Coordinate(2, 2),
+            Coordinate(3, 3),
+        )
+    }
+
+    @Test
+    fun `should find all points covered by a diagonal line top right to bottom left`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(9, 7),
+                end = Coordinate(7, 9)
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder(
+            Coordinate(9, 7),
+            Coordinate(8, 8),
+            Coordinate(7, 9),
+        )
+    }
+
+    @Test
+    fun `should find all points covered by diagonal line bottom right to top left`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(6, 4),
+                end = Coordinate(2, 0)
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder(
+            Coordinate(6, 4),
+            Coordinate(5, 3),
+            Coordinate(4, 2),
+            Coordinate(3, 1),
+            Coordinate(2, 0),
+        )
+    }
+
+    @Test
+    fun `should find all points covered by diagonal line bottom left to top right`() {
+
+        val result = Day5().pointsCoveredByLine(
+            Line(
+                start = Coordinate(5, 5),
+                end = Coordinate(8, 2)
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder(
+            Coordinate(5, 5),
+            Coordinate(6, 4),
+            Coordinate(7, 3),
+            Coordinate(8, 2),
+        )
+    }
+
+    @Test
+    fun `should list coordinates with the number of lines passing through them`() {
         val line1 = Line(Coordinate(1, 1), Coordinate(5, 1))
         val line2 = Line(Coordinate(3, 1), Coordinate(3, 3))
 
@@ -119,13 +190,13 @@ internal class Day5Test {
     }
 
     @Test
-    fun `should list points belonging to more than one line in the given test case`(){
+    fun `should list points belonging to more than one horizontal or vertical line in the given test case`() {
         val lines = Day5().horizontalOrVerticalOnly(testInput)
         val coordCount = Day5().findNumberOfLinesPerCoordinate(lines)
 
         assertThat(coordCount).containsAllEntriesOf(
             mapOf(
-                Coordinate(0,9) to 2,
+                Coordinate(0, 9) to 2,
                 Coordinate(3, 4) to 2,
             )
         )
@@ -133,15 +204,36 @@ internal class Day5Test {
     }
 
     @Test
-    fun `should count how many coords have two or more lines converging`(){
+    fun `should list points belonging to more than one line in the given test case`() {
+        val lines = Day5().asLines(testInput)
+        val coordCount = Day5().findNumberOfLinesPerCoordinate(lines)
+
+        assertThat(coordCount).containsAllEntriesOf(
+            mapOf(
+                Coordinate(7, 1) to 2,
+                Coordinate(5, 3) to 2,
+                Coordinate(4, 4) to 3,
+            )
+        )
+
+    }
+
+    @Test
+    fun `should count how many coords have two or more horizontal or vertical  converging`() {
         val result = Day5().countPointsWithOverlappingHorizontalOrVerticalLines(testInput)
 
         assertThat(result).isEqualTo(5)
     }
+
+    @Test
+    fun `should count how many coords have two or more lines converging`() {
+        val result = Day5().countPointsWithOverlappingLines(testInput)
+        assertThat(result).isEqualTo(12)
+    }
 }
 
 
-private val testInput = """0, 9 -> 5, 9
+private const val testInput = """0, 9 -> 5, 9
         8, 0 -> 0, 8
         9, 4 -> 3, 4
         2, 2 -> 2, 1
